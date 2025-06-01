@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import spacy
+from nltk.corpus import stopwords
+import string
 import networkx as nx
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
@@ -26,6 +28,26 @@ nlp = spacy.load("en_core_web_sm")
 
 # Load the CSV file
 df = pd.read_csv("PSOREQ/3.Smart_ranked_requirements_g10.csv")
+
+
+# Load stopwords
+stop_words = set(stopwords.words("english"))
+punctuations = string.punctuation
+
+# Define preprocessing function to extract content words only
+def preprocess_text(text):
+    doc = nlp(text.lower())
+    cleaned_tokens = []
+
+    for token in doc:
+        if (token.text not in stop_words and
+            token.text not in punctuations and
+            token.is_alpha and
+            token.pos_ in ["NOUN", "VERB", "ADJ", "ADV"]):  # Keep content words
+            cleaned_tokens.append(token.lemma_)  # Lemmatize
+
+    return " ".join(cleaned_tokens)
+
 
 def extract_dependency_relations(text):
     doc = nlp(text)
