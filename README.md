@@ -30,7 +30,13 @@ nlp = spacy.load("en_core_web_sm")
 df = pd.read_csv("PSOREQ/3.Smart_ranked_requirements_g10.csv")
 
 
+# Step 1: Incorporate User Ranking
+df["Mean Rank"] = (df["Business Value"] + df["Urgency"]) / 2
+
+# Step 2 Text Preprocessing
 # Load stopwords
+df["Cleaned Requirement"] = df["Requirement"].apply(preprocess_text)
+
 stop_words = set(stopwords.words("english"))
 punctuations = string.punctuation
 
@@ -49,6 +55,11 @@ def preprocess_text(text):
     return " ".join(cleaned_tokens)
 
 
+# Step 3: Generate BERT Embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2')
+bert_embeddings = model.encode(df["Requirement"].tolist(), convert_to_tensor=True).cpu().numpy()
+
+# Setp 4 Dependency
 def extract_dependency_relations(text):
     doc = nlp(text)
     dependencies = []
@@ -71,20 +82,15 @@ for idx, row in df.iterrows():
 
 df["Dependency Score"] = [nx.pagerank(G).get(i, 0) for i in df.index]
 
-# Step 4: Generate BERT Embeddings
-model = SentenceTransformer('all-MiniLM-L6-v2')
-bert_embeddings = model.encode(df["Requirement"].tolist(), convert_to_tensor=True).cpu().numpy()
-
-# Step 6: Incorporate User Ranking
-df["Mean Rank"] = (df["Business Value"] + df["Urgency"]) / 2
+# Setp 5 Normalization
 scaler = MinMaxScaler()
 df["Normalized Mean Rank"] = scaler.fit_transform(df[["Mean Rank"]])
 df["Normalized Dependency Score"] = scaler.fit_transform(df[["Dependency Score"]])
 
-# Step 7: Combine Features
+# Step 6: Combine Features
 combined_features = np.hstack((bert_embeddings, df[["Normalized Dependency Score", "Normalized Mean Rank"]].values))
 print('combined')
-# Step 8: Reduce Dimensionality using UMAP
+# Step 7: Reduce Dimensionality using UMAP
 umap = UMAP(n_components=2, random_state=42)
 reduced_features = umap.fit_transform(combined_features)
 
