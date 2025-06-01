@@ -137,6 +137,7 @@ best_k = int(np.round(best_k[0]))  # Extract scalar before conversion
 print(f" Best number of clusters found by PSO: {best_k}")
 
 # ---- Elbow Method for Verification ----
+# Elbow method used for visual verification only; PSO determines final k
 inertia_values = []
 K_range = range(2, 11)
 
