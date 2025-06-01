@@ -252,17 +252,12 @@ def evaluate_classifier(classifier, clusters, features, labels, classifier_name)
 csv_filename = "Classification/3.classification_evaluation.csv"
 
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, StackingClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.neural_network import MLPClassifier
 from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
-#from catboost import CatBoostClassifier
+
 import os
 # Define the list of classifiers to evaluate
 classifiers = {
@@ -273,14 +268,7 @@ classifiers = {
     "Support Vector Machine": SVC(probability=True, kernel='rbf', random_state=42),
     "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42),
     "Decision Tree": DecisionTreeClassifier(random_state=42),
-#    "Gaussian Naive Bayes": GaussianNB(),
-#    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, random_state=42),
-#    "AdaBoost": AdaBoostClassifier(n_estimators=100, random_state=42),
-#    "LightGBM": LGBMClassifier(n_estimators=100, random_state=42),
-#    "CatBoost": CatBoostClassifier(verbose=0, random_state=42),
-#    "Extra Trees": ExtraTreesClassifier(n_estimators=100, random_state=42),
-#    "Neural Network (MLP)": MLPClassifier(hidden_layer_sizes=(100,50), max_iter=500, random_state=42),
-#    "Linear Discriminant Analysis": LinearDiscriminantAnalysis()
+
 }
 
 csv_filename = "Classification/3.smrat.csv"
